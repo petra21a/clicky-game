@@ -30,11 +30,10 @@ class App extends React.Component {
     // Getting the value and name of the input which triggered the change
 
     const { name, value } = event.target;
-    console.log(name, value);
-  
+
     // Updating the input's state
     this.setState({
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -43,7 +42,7 @@ class App extends React.Component {
 
     const { name, value } = event.target;
     console.log(name, value);
-  
+
     // Updating the input's state
     this.setState({
       [name]: value,
@@ -54,8 +53,8 @@ class App extends React.Component {
   handleFormSubmit = event => {
     event.preventDefault();
     this.searchGiphy(this.state.theme + "&limit=" + this.state.limit);
-    this.setState({ blank:""})
-    console.log("form submited", this.state.theme, this.state.results);
+    const score = 0;
+    this.setState({ blank: "", score});
   };
 
   handleOnClick = id => {
@@ -65,19 +64,15 @@ class App extends React.Component {
     if (clicked.includes(id)) {
       score = 0;
       clicked.splice(0);
-      console.log("repeat - you lose", score, clicked);
     } else {
       clicked.push(id);
       score = score + 1;
       if (score > this.state.topScore) {
-        console.log("new top score");
         topScore = score;
       }
     }
     const images = this.shuffle(this.state.images);
     this.setState({ images, clicked, score, topScore });
-    console.log("image clicked", id);
-    console.log("clicked list", clicked);
   };
 
   shuffle = array => {
