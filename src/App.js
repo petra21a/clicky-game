@@ -3,42 +3,60 @@ import NavBar from "./components/NavBar";
 
 import Themes from "./components/Themes";
 import CardList from "./components/CardList";
-import images from "./images.json";
 import API from "./utils/API";
 
 class App extends React.Component {
   state = {
-    images: images,
+    images: [],
     score: 0,
     topScore: 0,
     clicked: [],
+    limit: 25,
+    blank: "",
+    theme: "dogs",
     results: []
   };
 
+  componentDidMount = () => {
+    this.searchGiphy("dogs&limit=" + this.state.limit);
+  };
   searchGiphy = query => {
     API.search(query)
-      .then(res => this.setState({ results: res.data.data }))
+      .then(res => this.setState({ images: res.data.data }))
       .catch(err => console.log(err));
   };
 
-
-  handleInputChange = event => {
+  handleLimitChange = event => {
     // Getting the value and name of the input which triggered the change
-  
-    const { name, value } = event.target;
-    console.log(name,value)
 
+    const { name, value } = event.target;
+    console.log(name, value);
+  
     // Updating the input's state
     this.setState({
-      [name]: value
+      [name]: value,
     });
   };
 
-handleFormSubmit = event => {
-  event.preventDefault();
-  this.searchGiphy(this.state.theme+"&limit="+this.state.limit);
-console.log("form submited", this.state.theme,this.state.results)
-}
+  handleSearchChange = event => {
+    // Getting the value and name of the input which triggered the change
+
+    const { name, value } = event.target;
+    console.log(name, value);
+  
+    // Updating the input's state
+    this.setState({
+      [name]: value,
+      blank: value
+    });
+  };
+
+  handleFormSubmit = event => {
+    event.preventDefault();
+    this.searchGiphy(this.state.theme + "&limit=" + this.state.limit);
+    this.setState({ blank:""})
+    console.log("form submited", this.state.theme, this.state.results);
+  };
 
   handleOnClick = id => {
     let score = this.state.score;
@@ -77,24 +95,29 @@ console.log("form submited", this.state.theme,this.state.results)
   render() {
     return (
       <div>
-        <NavBar score={this.state.score} topScore={this.state.topScore} />
-        <Themes  search={this.state.search} handleInputChange={this.handleInputChange} handleFormSubmit={this.handleFormSubmit}/>
-        {this.state.images.length === this.state.clicked.length ? 
-          <div className= "row"><p>You Won! Choose a theme for a new game </p>
-          </div>:
-          <CardList images = {this.state.images} handleOnClick = {this.handleOnClick} />
-        }
- <ul className="list-group">
-    {this.state.results.map(result => (
-      <li className="list-group-item" key={result.id}>
-        <img
-          alt={result.title}
-          className="img-fluid"
-          src={result.images.original.url}
+        <NavBar
+          score={this.state.score}
+          theme={this.state.theme}
+          topScore={this.state.topScore}
         />
-      </li>
-    ))}
-  </ul>
+        <Themes
+          search={this.state.search}
+          limit={this.state.limit}
+          blank={this.state.blank}
+          handleLimitChange={this.handleLimitChange}
+          handleSearchChange={this.handleSearchChange}
+          handleFormSubmit={this.handleFormSubmit}
+        />
+        {this.state.images.length === this.state.clicked.length ? (
+          <div className="row">
+            <p>You Won! Choose a theme for a new game </p>
+          </div>
+        ) : (
+          <CardList
+            images={this.state.images}
+            handleOnClick={this.handleOnClick}
+          />
+        )}
       </div>
     );
   }
